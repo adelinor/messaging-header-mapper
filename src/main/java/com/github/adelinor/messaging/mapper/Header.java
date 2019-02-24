@@ -51,6 +51,6 @@ public @interface Header {
      * (Optional) Converter to use for converting from to and
      *            a message
      */
-    Class<Converter<?, ?>> converter();
+//    Class<Converter<?, ?>> converter() default ;
 
 }
