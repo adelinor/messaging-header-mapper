@@ -1,13 +1,10 @@
 package com.github.adelinor.messaging.mapper;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import org.springframework.core.convert.converter.Converter;
-
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Is used to specify the mapped header of JMS (or other messaging standards)
@@ -32,7 +29,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * </pre></blockquote>
  *
  */
-@Target({METHOD, FIELD})
+@Target(FIELD)
 @Retention(RUNTIME)
 public @interface Header {
 
@@ -46,11 +43,4 @@ public @interface Header {
      * (Optional) Whether the message header can be absent.
      */
     boolean required() default false;
-    
-    /**
-     * (Optional) Converter to use for converting from to and
-     *            a message
-     */
-//    Class<Converter<?, ?>> converter() default ;
-
 }

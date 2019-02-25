@@ -20,7 +20,39 @@ public class MyMessage {
 	private String messageNumber;
 
 	@Header
-	private Date timestamp;
+	private Date receiveDate;
 
 	private int formatVersion;
+
+	public MessageType getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(MessageType messageType) {
+		this.messageType = messageType;
+	}
+
+	public String getMessageNumber() {
+		return messageNumber;
+	}
+
+	public void setMessageNumber(String messageNumber) {
+		this.messageNumber = messageNumber;
+	}
+
+	public Date getReceiveDate() {
+		return receiveDate;
+	}
+
+	public void setReceiveDate(Date receiveDate) {
+		this.receiveDate = receiveDate;
+	}
+
+	public int getFormatVersion() {
+		return formatVersion;
+	}
+
+	public void setFormatVersion(int formatVersion) {
+		this.formatVersion = formatVersion;
+	}
 }
