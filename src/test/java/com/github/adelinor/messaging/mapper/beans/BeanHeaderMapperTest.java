@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.github.adelinor.messaging.mapper.beans.BeanHeaderMapper;
 import com.github.adelinor.sample.MessageType;
 import com.github.adelinor.sample.MyMessage;
+import com.github.adelinor.sample.primitives.MyMessagePrimitives;
 
 class BeanHeaderMapperTest {
 
@@ -54,6 +55,32 @@ class BeanHeaderMapperTest {
 		mapper.fromHeaders(headers, m);
 		
 		assertThat(m.isDuplicate()).isTrue();
+	}
+
+	@Test
+	void testFromHeaders_Primitive() {
+		Map<String, Object> headers = new HashMap<>();
+		headers.put("IS_DUPLICATE", "true");
+		headers.put("PRIORITY", "A");
+		headers.put("FLAGS", "3");
+		headers.put("REVISION", "54");
+		headers.put("SEQ", "7");
+		headers.put("ID", "10021");
+		headers.put("RATE", "0.02");
+		headers.put("INC", "10.202");
+		
+		BeanHeaderMapper<MyMessagePrimitives> mapper = new BeanHeaderMapper<>(MyMessagePrimitives.class);
+		MyMessagePrimitives m = new MyMessagePrimitives();
+		mapper.fromHeaders(headers, m);
+		
+		assertThat(m.isDuplicate()).isTrue();
+		assertThat(m.getPriority()).isEqualTo('A');
+		assertThat(m.getFlags()).isEqualTo(3);
+		assertThat(m.getRevisionNumber()).isEqualTo(54);
+		assertThat(m.getSequence()).isEqualTo(7);		
+		assertThat(m.getIdentifier()).isEqualTo(10021);		
+		assertThat(m.getRate()).isEqualTo(0.02f);		
+		assertThat(m.getIncrease()).isEqualTo(10.202d);		
 	}
 
 	@Test
