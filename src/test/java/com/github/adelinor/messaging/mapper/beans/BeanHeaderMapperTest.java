@@ -17,14 +17,14 @@ class BeanHeaderMapperTest {
 	@Test
 	void testFromHeaders() {
 		Map<String, Object> headers = new HashMap<>();
-//		headers.put("MESSAGE_TYPE", "INBOUND");
+		headers.put("MESSAGE_TYPE", "INBOUND");
 		headers.put("BATCH_NUMBER", "12345");
 		
 		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
 		MyMessage m = new MyMessage();
 		mapper.fromHeaders(headers, m);
 		
-//		assertEquals(MessageType.INBOUND, m.getMessageType());
+		assertThat(m.getMessageType()).isEqualTo(MessageType.INBOUND);
 		assertThat(m.getMessageNumber()).isEqualTo("12345");
 	}
 
@@ -46,11 +46,13 @@ class BeanHeaderMapperTest {
 	void testToHeaders() {
 		MyMessage m = new MyMessage();
 		m.setMessageNumber("12345");
+		m.setMessageType(MessageType.INBOUND);
 		
 		Map<String, Object> headers = new HashMap<>();
 		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
 		mapper.toHeaders(m, headers);
 		assertThat(headers.get("BATCH_NUMBER")).isEqualTo("12345");
+		assertThat(headers.get("MESSAGE_TYPE")).isEqualTo("INBOUND");
 	}
 
 	@Test

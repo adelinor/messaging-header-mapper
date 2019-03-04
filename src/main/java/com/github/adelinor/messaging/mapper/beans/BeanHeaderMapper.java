@@ -1,10 +1,6 @@
 package com.github.adelinor.messaging.mapper.beans;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -43,15 +39,12 @@ public class BeanHeaderMapper<T> implements MapHeaderMapper<T> {
 			}
 			if (hasHeader) {
 				Object value = headers.get(mapping.getHeaderName());
-				// TODO add test where no setter is available
-				if (mapping.getSetter() != null) {
-					try {
-						mapping.getSetter().invoke(target, value);
-					} catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException exc) {
-						throw new IllegalStateException("Cannot set property " +
-								mapping.getFieldName() + " on object of type " +
-								target.getClass(), exc);
-					}
+				try {
+					mapping.getSetter().invoke(target, value);
+				} catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException exc) {
+					throw new IllegalStateException("Cannot set property " +
+							mapping.getFieldName() + " on object of type " +
+							target.getClass(), exc);
 				}
 			}
 		}
