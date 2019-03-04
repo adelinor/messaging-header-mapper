@@ -49,6 +49,11 @@ public class BeanHeaderMapper<T> implements MapHeaderMapper<T> {
 
 					} else if (mapping.getFieldType().isEnum() && valueClass == String.class) {
 						objectValue = convertToEnumValue((String) value, mapping.getFieldType());
+
+					} else if (mapping.getFieldType().isPrimitive() && valueClass == String.class) {
+						objectValue = convertToPrimitiveValue((String) value, mapping.getFieldType());
+					} else if (mapping.getFieldType() == Boolean.class && valueClass == String.class) {
+						objectValue = convertToPrimitiveValue((String) value, Boolean.TYPE);
 					}
 
 					
@@ -104,6 +109,14 @@ public class BeanHeaderMapper<T> implements MapHeaderMapper<T> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static Enum<?> convertToEnumValue(String value, Class enumType) {
 		return Enum.valueOf(enumType, (String) value);
+	}
+	
+	private static Object convertToPrimitiveValue(String value, Class<?> primitiveType) {
+		if (primitiveType == Boolean.TYPE) {
+			return Boolean.parseBoolean(value);
+		}
+		// TODO
+		return null;
 	}
 
 }
