@@ -47,5 +47,6 @@ class IntrospectionMappingExtractorTest {
 		assertThat(mapping.isRequired()).isFalse();
 		assertThat(mapping.getGetter()).isNotNull();
 		assertThat(mapping.getSetter()).isNotNull();
+		assertThat(mapping.getHeaderType()).isEqualTo(String.class);
 	}
 }

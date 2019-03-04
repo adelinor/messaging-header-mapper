@@ -39,8 +39,22 @@ public class BeanHeaderMapper<T> implements MapHeaderMapper<T> {
 			}
 			if (hasHeader) {
 				Object value = headers.get(mapping.getHeaderName());
+				Object objectValue = null;
+				
+				if (value != null) {
+					Class<?> valueClass = value.getClass();
+
+					if (mapping.getFieldType().isAssignableFrom(valueClass)) {
+						objectValue = value;
+
+					} else if (mapping.getFieldType().isEnum() && valueClass == String.class) {
+						objectValue = convertToEnumValue((String) value, mapping.getFieldType());
+					}
+
+					
+				}
 				try {
-					mapping.getSetter().invoke(target, value);
+					mapping.getSetter().invoke(target, objectValue);
 				} catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException exc) {
 					throw new IllegalStateException("Cannot set property " +
 							mapping.getFieldName() + " on object of type " +
@@ -68,9 +82,28 @@ public class BeanHeaderMapper<T> implements MapHeaderMapper<T> {
 						" is null");
 			}
 			if (value != null) {
-				headers.put(mapping.getHeaderName(), value);
+				Object headerValue = null;
+				Class<?> valueClass = value.getClass();
+				if (mapping.getHeaderType().isAssignableFrom(valueClass)) {
+					headerValue = value;
+				} else if (mapping.getHeaderType() == String.class) {
+					headerValue = value.toString();
+				}
+				headers.put(mapping.getHeaderName(), headerValue);
 			}
 		}
+	}
+
+	/**
+	 * Converts a string value to an Enum.
+	 * 
+	 * @param value Value to convert
+	 * @param enumType   Class of the enum corresponding to the value
+	 * @return Instance of enum which corresponds to the value
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static Enum<?> convertToEnumValue(String value, Class enumType) {
+		return Enum.valueOf(enumType, (String) value);
 	}
 
 }

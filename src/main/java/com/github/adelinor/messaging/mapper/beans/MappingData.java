@@ -12,6 +12,7 @@ class MappingData {
 
 	private Class<?> fieldType;
 	private String fieldName;
+	private Class<?> headerType;
 	private String headerName;
 	private boolean required;
 	private Method getter;
@@ -26,10 +27,11 @@ class MappingData {
 	 * @param getter Java bean access method
 	 * @param setter Java bean access method
 	 */
-	public MappingData(Class<?> fieldType, String fieldName, String headerName, boolean required, Method getter,
-			Method setter) {
+	public MappingData(Class<?> fieldType, String fieldName, Class<?> headerType,
+			String headerName, boolean required, Method getter, Method setter) {
 		this.fieldType = fieldType;
 		this.fieldName = fieldName;
+		this.headerType = headerType;
 		this.headerName = headerName;
 		this.required = required;
 		this.getter = getter;
@@ -58,5 +60,9 @@ class MappingData {
 
 	public Method getSetter() {
 		return setter;
+	}
+
+	public Class<?> getHeaderType() {
+		return headerType;
 	}
 }

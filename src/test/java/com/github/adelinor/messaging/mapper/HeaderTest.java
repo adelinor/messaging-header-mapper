@@ -27,7 +27,7 @@ class HeaderTest {
 		for (Field field : fields) {
 			String fieldName = field.getName();
 			assertThat( fieldName ).isIn("messageType", "messageNumber",
-					"receiveDate", "formatVersion");
+					"receiveDate", "formatVersion", "valid", "duplicate");
 
 			Header header = field.getAnnotation(Header.class);
 
@@ -35,19 +35,34 @@ class HeaderTest {
 				assertThat(header).isNotNull();
 				assertThat(header.required()).isFalse();
 				assertThat(header.name()).isEqualTo("MESSAGE_TYPE");
+				assertThat(header.valueType()).isEqualTo(String.class);
 
 			} else if ("messageNumber".equals(fieldName)) {
 				assertThat(header).isNotNull();
 				assertThat(header.required()).isTrue();
 				assertThat(header.name()).isEqualTo("BATCH_NUMBER");
+				assertThat(header.valueType()).isEqualTo(String.class);
 				
 			} else if ("receiveDate".equals(fieldName)) {
 				assertThat(header).isNotNull();
 				assertThat(header.required()).isFalse();
 				assertThat(header.name()).isEqualTo("");
+				assertThat(header.valueType()).isEqualTo(Long.class);
 				
 			} else if ("formatVersion".equals(fieldName)) {
 				assertThat(header).isNull();
+
+			} else if ("valid".equals(fieldName)) {
+				assertThat(header).isNotNull();
+				assertThat(header.required()).isFalse();
+				assertThat(header.name()).isEqualTo("IS_VALID");
+				assertThat(header.valueType()).isEqualTo(String.class);
+
+			} else if ("duplicate".equals(fieldName)) {
+				assertThat(header).isNotNull();
+				assertThat(header.required()).isFalse();
+				assertThat(header.name()).isEqualTo("IS_DUPLICATE");
+				assertThat(header.valueType()).isEqualTo(String.class);
 			}
 		}
 	}

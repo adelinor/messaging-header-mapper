@@ -34,6 +34,7 @@ class IntrospectionMappingExtractor {
 		return new MappingData(
 						field.getType(),
 						field.getName(),
+						header.valueType(),
 						header.name(),
 						header.required(),
 						desc.getReadMethod(),

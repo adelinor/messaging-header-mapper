@@ -43,4 +43,10 @@ public @interface Header {
      * (Optional) Whether the message header can be absent.
      */
     boolean required() default false;
+    
+    /**
+     * (Optional) The type for the header value. Defaults
+     * to String
+     */
+    Class<?> valueType() default String.class;
 }

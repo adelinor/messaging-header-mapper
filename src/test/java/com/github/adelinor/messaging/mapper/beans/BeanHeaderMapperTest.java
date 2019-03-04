@@ -53,6 +53,8 @@ class BeanHeaderMapperTest {
 		mapper.toHeaders(m, headers);
 		assertThat(headers.get("BATCH_NUMBER")).isEqualTo("12345");
 		assertThat(headers.get("MESSAGE_TYPE")).isEqualTo("INBOUND");
+		assertThat(headers.containsKey("IS_VALID")).isFalse();
+		assertThat(headers.get("IS_DUPLICATE")).isEqualTo("false");
 	}
 
 	@Test
