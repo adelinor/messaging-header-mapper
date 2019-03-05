@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.adelinor.sample.DateToLongConverter;
 import com.github.adelinor.sample.MyMessage;
 
 /**
@@ -35,19 +36,19 @@ class HeaderTest {
 				assertThat(header).isNotNull();
 				assertThat(header.required()).isFalse();
 				assertThat(header.name()).isEqualTo("MESSAGE_TYPE");
-				assertThat(header.valueType()).isEqualTo(String.class);
+				assertThat(header.converter()).isEqualTo(DefaultHeaderConverter.class);
 
 			} else if ("messageNumber".equals(fieldName)) {
 				assertThat(header).isNotNull();
 				assertThat(header.required()).isTrue();
 				assertThat(header.name()).isEqualTo("BATCH_NUMBER");
-				assertThat(header.valueType()).isEqualTo(String.class);
+				assertThat(header.converter()).isEqualTo(DefaultHeaderConverter.class);
 				
 			} else if ("receiveDate".equals(fieldName)) {
 				assertThat(header).isNotNull();
 				assertThat(header.required()).isFalse();
 				assertThat(header.name()).isEqualTo("");
-				assertThat(header.valueType()).isEqualTo(Long.class);
+				assertThat(header.converter()).isEqualTo(DateToLongConverter.class);
 				
 			} else if ("formatVersion".equals(fieldName)) {
 				assertThat(header).isNull();
@@ -56,13 +57,13 @@ class HeaderTest {
 				assertThat(header).isNotNull();
 				assertThat(header.required()).isFalse();
 				assertThat(header.name()).isEqualTo("IS_VALID");
-				assertThat(header.valueType()).isEqualTo(String.class);
+				assertThat(header.converter()).isEqualTo(DefaultHeaderConverter.class);
 
 			} else if ("duplicate".equals(fieldName)) {
 				assertThat(header).isNotNull();
 				assertThat(header.required()).isFalse();
 				assertThat(header.name()).isEqualTo("IS_DUPLICATE");
-				assertThat(header.valueType()).isEqualTo(String.class);
+				assertThat(header.converter()).isEqualTo(DefaultHeaderConverter.class);
 			}
 		}
 	}

@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  *
  *    Example 2:
  *
- *    &#064;Header(name="RECEIVE_DATE", converter=LongToDate.class)
+ *    &#064;Header(name="RECEIVE_DATE", converter=DateToLongConverter.class)
  *    private Date receiveDate;
  *
  *    Example 3:
@@ -45,8 +45,9 @@ public @interface Header {
     boolean required() default false;
     
     /**
-     * (Optional) The type for the header value. Defaults
-     * to String
+     * (Optional) The converter to use. Defaults
+     * to {@link DefaultHeaderConverter} which only 
+     * supports very simple conversions.
      */
-    Class<?> valueType() default String.class;
+    Class<? extends HeaderConverter<?, ?>> converter() default DefaultHeaderConverter.class;
 }

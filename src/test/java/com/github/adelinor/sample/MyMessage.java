@@ -19,7 +19,7 @@ public class MyMessage {
 	@Header(name="BATCH_NUMBER", required=true)
 	private String messageNumber;
 
-	@Header(valueType=Long.class)
+	@Header(converter=DateToLongConverter.class)
 	private Date receiveDate;
 
 	private int formatVersion;

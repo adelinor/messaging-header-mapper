@@ -76,8 +76,8 @@ class BeanHeaderMapperTest {
 		
 		assertThat(m.isDuplicate()).isTrue();
 		assertThat(m.getPriority()).isEqualTo('A');
-		assertThat(m.getFlags()).isEqualTo(3);
-		assertThat(m.getRevisionNumber()).isEqualTo(54);
+		assertThat(m.getFlags()).isEqualTo((byte) 3);
+		assertThat(m.getRevisionNumber()).isEqualTo((short) 54);
 		assertThat(m.getSequence()).isEqualTo(7);		
 		assertThat(m.getIdentifier()).isEqualTo(10021L);		
 		assertThat(m.getRate()).isEqualTo(0.02f);		
@@ -148,6 +148,7 @@ class BeanHeaderMapperTest {
 		m.setPriority('A');
 		m.setFlags((byte) 3); 
 		m.setSequence(7);
+		m.setRevisionNumber((short) 54);
 		m.setIdentifier(10021L);
 		m.setRate(0.02f);
 		m.setIncrease(10.202d);

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.adelinor.messaging.mapper.Header;
+import com.github.adelinor.messaging.mapper.HeaderConverter;
 import com.github.adelinor.messaging.mapper.MapHeaderMapper;
 
 /**
@@ -39,31 +40,20 @@ public class BeanHeaderMapper<T> implements MapHeaderMapper<T> {
 			}
 			if (hasHeader) {
 				Object value = headers.get(mapping.getHeaderName());
-				Object objectValue = null;
 				
 				if (value != null) {
-					Class<?> valueClass = value.getClass();
+					@SuppressWarnings("unchecked")
+					HeaderConverter<Object, Object> converter = (HeaderConverter<Object, Object>) mapping.getConverter();
+					Object objectValue = converter.convertToObjectValue(value);
 
-					if (mapping.getFieldType().isAssignableFrom(valueClass)) {
-						objectValue = value;
-
-					} else if (mapping.getFieldType().isEnum() && valueClass == String.class) {
-						objectValue = convertToEnumValue((String) value, mapping.getFieldType());
-
-					} else if (mapping.getFieldType().isPrimitive() && valueClass == String.class) {
-						objectValue = convertToPrimitiveValue((String) value, mapping.getFieldType());
-					} else if (mapping.getFieldType() == Boolean.class && valueClass == String.class) {
-						objectValue = convertToPrimitiveValue((String) value, Boolean.TYPE);
+					try {
+						mapping.getSetter().invoke(target, objectValue);
+					} catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException exc) {
+						throw new IllegalStateException("Cannot set property " +
+								mapping.getFieldName() + " on object of type " +
+								target.getClass(), exc);
 					}
 
-					
-				}
-				try {
-					mapping.getSetter().invoke(target, objectValue);
-				} catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException exc) {
-					throw new IllegalStateException("Cannot set property " +
-							mapping.getFieldName() + " on object of type " +
-							target.getClass(), exc);
 				}
 			}
 		}
@@ -87,36 +77,11 @@ public class BeanHeaderMapper<T> implements MapHeaderMapper<T> {
 						" is null");
 			}
 			if (value != null) {
-				Object headerValue = null;
-				Class<?> valueClass = value.getClass();
-				if (mapping.getHeaderType().isAssignableFrom(valueClass)) {
-					headerValue = value;
-				} else if (mapping.getHeaderType() == String.class) {
-					headerValue = value.toString();
-				}
+				@SuppressWarnings("unchecked")
+				HeaderConverter<Object, Object> converter = (HeaderConverter<Object, Object>) mapping.getConverter();
+				Object headerValue = converter.convertToHeaderValue(value);
 				headers.put(mapping.getHeaderName(), headerValue);
 			}
 		}
 	}
-
-	/**
-	 * Converts a string value to an Enum.
-	 * 
-	 * @param value Value to convert
-	 * @param enumType   Class of the enum corresponding to the value
-	 * @return Instance of enum which corresponds to the value
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static Enum<?> convertToEnumValue(String value, Class enumType) {
-		return Enum.valueOf(enumType, (String) value);
-	}
-	
-	private static Object convertToPrimitiveValue(String value, Class<?> primitiveType) {
-		if (primitiveType == Boolean.TYPE) {
-			return Boolean.parseBoolean(value);
-		}
-		// TODO
-		return null;
-	}
-
 }

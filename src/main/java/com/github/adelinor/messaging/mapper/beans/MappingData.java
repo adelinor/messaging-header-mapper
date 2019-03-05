@@ -2,6 +2,8 @@ package com.github.adelinor.messaging.mapper.beans;
 
 import java.lang.reflect.Method;
 
+import com.github.adelinor.messaging.mapper.HeaderConverter;
+
 /**
  * Java bean to header mapping data.
  *
@@ -12,8 +14,8 @@ class MappingData {
 
 	private Class<?> fieldType;
 	private String fieldName;
-	private Class<?> headerType;
 	private String headerName;
+	private HeaderConverter<?, ?> converter;
 	private boolean required;
 	private Method getter;
 	private Method setter;
@@ -27,12 +29,12 @@ class MappingData {
 	 * @param getter Java bean access method
 	 * @param setter Java bean access method
 	 */
-	public MappingData(Class<?> fieldType, String fieldName, Class<?> headerType,
-			String headerName, boolean required, Method getter, Method setter) {
+	public MappingData(Class<?> fieldType, String fieldName, String headerName,
+			HeaderConverter<?, ?> converter, boolean required, Method getter, Method setter) {
 		this.fieldType = fieldType;
 		this.fieldName = fieldName;
-		this.headerType = headerType;
 		this.headerName = headerName;
+		this.converter = converter;
 		this.required = required;
 		this.getter = getter;
 		this.setter = setter;
@@ -62,7 +64,7 @@ class MappingData {
 		return setter;
 	}
 
-	public Class<?> getHeaderType() {
-		return headerType;
+	public HeaderConverter<?, ?> getConverter() {
+		return converter;
 	}
 }
