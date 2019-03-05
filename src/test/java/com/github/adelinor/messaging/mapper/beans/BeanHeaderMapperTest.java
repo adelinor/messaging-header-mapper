@@ -73,6 +73,20 @@ class BeanHeaderMapperTest {
 	}
 
 	@Test
+	void testFromHeaders_NullPrimitive() {
+		Map<String, Object> headers = new HashMap<>();
+		headers.put("IS_DUPLICATE", null);
+		headers.put("BATCH_NUMBER", "12345");
+		
+		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MyMessage m = new MyMessage();
+		m.setDuplicate(true);
+		mapper.fromHeaders(headers, m);
+		
+		assertThat(m.isDuplicate()).as("Null value is ignored").isTrue();
+	}
+
+	@Test
 	void testFromHeaders_Primitive() {
 		Map<String, Object> headers = new HashMap<>();
 		headers.put("IS_DUPLICATE", "true");
@@ -139,6 +153,18 @@ class BeanHeaderMapperTest {
 		mapper.toHeaders(m, headers);
 		assertThat(headers.get("IS_VALID")).isEqualTo("false");
 		assertThat(headers.get("IS_DUPLICATE")).isEqualTo("true");
+	}
+
+	@Test
+	void testToHeaders_Null() {
+		MyMessage m = new MyMessage();
+		m.setMessageNumber("12345");
+		m.setValid(null);
+		
+		Map<String, Object> headers = new HashMap<>();
+		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		mapper.toHeaders(m, headers);
+		assertThat(headers.containsKey("IS_VALID")).isFalse();
 	}
 
 	@Test
