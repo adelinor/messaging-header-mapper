@@ -3,6 +3,7 @@ package com.github.adelinor.messaging.mapper.beans;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,19 @@ class BeanHeaderMapperTest {
 		assertThat(m.getMessageNumber()).isEqualTo("12345");
 		assertThat(m.getValid()).isNull();
 		assertThat(m.isDuplicate()).isFalse();
+	}
+
+	@Test
+	void testFromHeaders_CustomConverter() {
+		Map<String, Object> headers = new HashMap<>();
+		headers.put("receiveDate", 0L);
+		headers.put("BATCH_NUMBER", "12345");
+		
+		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MyMessage m = new MyMessage();
+		mapper.fromHeaders(headers, m);
+		
+		assertThat(m.getReceiveDate()).isEqualTo("1970-01-01T01:00:00.000");
 	}
 
 	@Test
@@ -172,6 +186,24 @@ class BeanHeaderMapperTest {
 		assertThat(headers.get("ID")).isEqualTo("10021");
 		assertThat(headers.get("RATE")).isEqualTo("0.02");
 		assertThat(headers.get("INC")).isEqualTo("10.202");
+	}
+
+	@Test
+	void testToHeaders_CustomConverter() {
+		MyMessage m = new MyMessage();
+		Date date = new Date();
+		Long expectedMillis = 12345L;
+		date.setTime(expectedMillis);
+		m.setReceiveDate(date);
+		
+		m.setMessageNumber("12345");
+
+		Map<String, Object> headers = new HashMap<>();
+		
+		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		mapper.toHeaders(m, headers);
+		
+		assertThat(headers.get("receiveDate")).isEqualTo(expectedMillis);
 	}
 
 }

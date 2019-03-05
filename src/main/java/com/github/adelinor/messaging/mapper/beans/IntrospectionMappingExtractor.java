@@ -34,10 +34,14 @@ class IntrospectionMappingExtractor {
 
 		HeaderConverter<?, ?> converter = getHeaderConverter(header.converter(), beanClass, field);
 		PropertyDescriptor desc = getPropertyDescriptor(field.getName(), beanClass);
+		String headerName = header.name();
+		if (headerName.isEmpty()) {
+			headerName = field.getName();
+		}
 		return new MappingData(
 						field.getType(),
 						field.getName(),
-						header.name(),
+						headerName,
 						converter,
 						header.required(),
 						desc.getReadMethod(),

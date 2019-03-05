@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.github.adelinor.sample.nogettersetter.MyMessageNoGetter;
 import com.github.adelinor.sample.nogettersetter.MyMessageNoSetter;
 import com.github.adelinor.sample.nogettersetter.MyMessageWithGetterSetter;
+import com.github.adelinor.sample.noname.MyMessageNoHeaderName;
 
 class IntrospectionMappingExtractorTest {
 
@@ -49,4 +50,22 @@ class IntrospectionMappingExtractorTest {
 		assertThat(mapping.getSetter()).isNotNull();
 		assertThat(mapping.getConverter()).isNotNull();
 	}
+
+	@Test
+	void testExtractFor_NoHeaderName() {
+		Field[] fields = MyMessageNoHeaderName.class.getDeclaredFields();
+		assertThat(fields).hasSize(1);
+		
+		IntrospectionMappingExtractor extractor = new IntrospectionMappingExtractor();
+		MappingData mapping = extractor.extractFor(MyMessageNoHeaderName.class, fields[0]);
+		assertThat(mapping).isNotNull();
+		assertThat(mapping.getFieldType()).isEqualTo(Integer.class);
+		assertThat(mapping.getFieldName()).isEqualTo("status");
+		assertThat(mapping.getHeaderName()).isEqualTo("status");
+		assertThat(mapping.isRequired()).isFalse();
+		assertThat(mapping.getGetter()).isNotNull();
+		assertThat(mapping.getSetter()).isNotNull();
+		assertThat(mapping.getConverter()).isNotNull();
+	}
+
 }
