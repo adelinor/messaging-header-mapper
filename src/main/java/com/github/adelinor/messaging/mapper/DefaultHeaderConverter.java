@@ -103,6 +103,84 @@ public class DefaultHeaderConverter implements HeaderConverter<Object, String> {
 		}
 	}
 
+	private static class ByteHeaderConverter implements HeaderConverter<Byte, String> {
+
+		@Override
+		public String convertToHeaderValue(Byte value) {
+			return value.toString();
+		}
+
+		@Override
+		public Byte convertToObjectValue(String value) {
+			return Byte.valueOf(value);
+		}
+	}
+
+	private static class ShortHeaderConverter implements HeaderConverter<Short, String> {
+
+		@Override
+		public String convertToHeaderValue(Short value) {
+			return value.toString();
+		}
+
+		@Override
+		public Short convertToObjectValue(String value) {
+			return Short.valueOf(value);
+		}
+	}
+
+	private static class IntegerHeaderConverter implements HeaderConverter<Integer, String> {
+
+		@Override
+		public String convertToHeaderValue(Integer value) {
+			return value.toString();
+		}
+
+		@Override
+		public Integer convertToObjectValue(String value) {
+			return Integer.valueOf(value);
+		}
+	}
+
+	private static class LongHeaderConverter implements HeaderConverter<Long, String> {
+
+		@Override
+		public String convertToHeaderValue(Long value) {
+			return value.toString();
+		}
+
+		@Override
+		public Long convertToObjectValue(String value) {
+			return Long.valueOf(value);
+		}
+	}
+
+	private static class FloatHeaderConverter implements HeaderConverter<Float, String> {
+
+		@Override
+		public String convertToHeaderValue(Float value) {
+			return value.toString();
+		}
+
+		@Override
+		public Float convertToObjectValue(String value) {
+			return Float.valueOf(value);
+		}
+	}
+
+	private static class DoubleHeaderConverter implements HeaderConverter<Double, String> {
+
+		@Override
+		public String convertToHeaderValue(Double value) {
+			return value.toString();
+		}
+
+		@Override
+		public Double convertToObjectValue(String value) {
+			return Double.valueOf(value);
+		}
+	}
+
 	/**
 	 * Registry of converters for the getConverter method.
 	 */
@@ -114,6 +192,12 @@ public class DefaultHeaderConverter implements HeaderConverter<Object, String> {
 		this.addConverter(new StringHeaderConverter(), String.class);
 		this.addConverter(new BooleanHeaderConverter(), Boolean.class, Boolean.TYPE);
 		this.addConverter(new CharacterHeaderConverter(), Character.class, Character.TYPE);
+		this.addConverter(new ByteHeaderConverter(), Byte.class, Byte.TYPE);
+		this.addConverter(new ShortHeaderConverter(), Short.class, Short.TYPE);
+		this.addConverter(new IntegerHeaderConverter(), Integer.class, Integer.TYPE);
+		this.addConverter(new LongHeaderConverter(), Long.class, Long.TYPE);
+		this.addConverter(new FloatHeaderConverter(), Float.class, Float.TYPE);
+		this.addConverter(new DoubleHeaderConverter(), Double.class, Double.TYPE);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

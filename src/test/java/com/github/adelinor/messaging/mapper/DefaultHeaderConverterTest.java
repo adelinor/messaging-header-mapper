@@ -90,4 +90,76 @@ class DefaultHeaderConverterTest {
 		assertThat(primitiveConverter).isSameAs(converter);
 	}
 
+	@Test
+	void testGetConverter_Byte() {
+		HeaderConverter<Byte, String> converter = getConverter(Byte.class);
+		assertThat(converter).isNotNull();
+
+		assertThat(converter.convertToHeaderValue(Byte.MAX_VALUE)).isEqualTo("127");
+		assertThat(converter.convertToObjectValue("-128")).isEqualTo(Byte.MIN_VALUE);
+
+		HeaderConverter<Byte, String> primitiveConverter = getConverter(Byte.TYPE);
+		assertThat(primitiveConverter).isSameAs(converter);
+	}
+
+	@Test
+	void testGetConverter_Short() {
+		HeaderConverter<Short, String> converter = getConverter(Short.class);
+		assertThat(converter).isNotNull();
+
+		assertThat(converter.convertToHeaderValue(Short.MAX_VALUE)).isEqualTo("32767");
+		assertThat(converter.convertToObjectValue("-32768")).isEqualTo(Short.MIN_VALUE);
+
+		HeaderConverter<Short, String> primitiveConverter = getConverter(Short.TYPE);
+		assertThat(primitiveConverter).isSameAs(converter);
+	}
+
+	@Test
+	void testGetConverter_Integer() {
+		HeaderConverter<Integer, String> converter = getConverter(Integer.class);
+		assertThat(converter).isNotNull();
+
+		assertThat(converter.convertToHeaderValue(1)).isEqualTo("1");
+		assertThat(converter.convertToObjectValue("-1")).isEqualTo(-1);
+
+		HeaderConverter<Integer, String> primitiveConverter = getConverter(Integer.TYPE);
+		assertThat(primitiveConverter).isSameAs(converter);
+	}
+
+	@Test
+	void testGetConverter_Long() {
+		HeaderConverter<Long, String> converter = getConverter(Long.class);
+		assertThat(converter).isNotNull();
+
+		assertThat(converter.convertToHeaderValue(100L)).isEqualTo("100");
+		assertThat(converter.convertToObjectValue("-200")).isEqualTo(-200L);
+
+		HeaderConverter<Long, String> primitiveConverter = getConverter(Long.TYPE);
+		assertThat(primitiveConverter).isSameAs(converter);
+	}
+
+	@Test
+	void testGetConverter_Float() {
+		HeaderConverter<Float, String> converter = getConverter(Float.class);
+		assertThat(converter).isNotNull();
+
+		assertThat(converter.convertToHeaderValue(1.000001f)).isEqualTo("1.000001");
+		assertThat(converter.convertToObjectValue("-0.00999")).isEqualTo(-0.00999f);
+
+		HeaderConverter<Float, String> primitiveConverter = getConverter(Float.TYPE);
+		assertThat(primitiveConverter).isSameAs(converter);
+	}
+
+	@Test
+	void testGetConverter_Double() {
+		HeaderConverter<Double, String> converter = getConverter(Double.class);
+		assertThat(converter).isNotNull();
+
+		assertThat(converter.convertToHeaderValue(0.123456789d)).isEqualTo("0.123456789");
+		assertThat(converter.convertToObjectValue("-10.01")).isEqualTo(-10.01d);
+
+		HeaderConverter<Double, String> primitiveConverter = getConverter(Double.TYPE);
+		assertThat(primitiveConverter).isSameAs(converter);
+	}
+
 }
