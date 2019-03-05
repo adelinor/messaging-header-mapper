@@ -68,3 +68,5 @@ assertThat(headers.get("BATCH_NUMBER")).isEqualTo("12345");
 assertThat(headers.get("MESSAGE_TYPE")).isEqualTo("INBOUND");
 
 ```
+
+Et voilà!
