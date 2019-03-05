@@ -1,5 +1,7 @@
 package com.github.adelinor.messaging.mapper;
 
+import static com.github.adelinor.messaging.mapper.DefaultHeaderConverter.canConvert;
+import static com.github.adelinor.messaging.mapper.DefaultHeaderConverter.getConverter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
@@ -13,34 +15,79 @@ class DefaultHeaderConverterTest {
 
 	@Test
 	void testCanConvert() {
-		DefaultHeaderConverter converter = new DefaultHeaderConverter();
+		assertThat(canConvert(Collection.class)).isFalse();
+		assertThat(canConvert(String[].class)).isFalse();
+		assertThat(canConvert(Date.class)).isFalse();
+		assertThat(canConvert(Void.class)).isFalse();
+		assertThat(canConvert(Void.TYPE)).isFalse();
 
-		assertThat(converter.canConvert(Collection.class)).isFalse();
-		assertThat(converter.canConvert(String[].class)).isFalse();
-		assertThat(converter.canConvert(Date.class)).isFalse();
-		assertThat(converter.canConvert(Void.class)).isFalse();
-		assertThat(converter.canConvert(Void.TYPE)).isFalse();
+		assertThat(canConvert(String.class)).isTrue();
+		assertThat(canConvert(SampleEnum.class)).isTrue();
 
-		assertThat(converter.canConvert(String.class)).isTrue();
-		assertThat(converter.canConvert(SampleEnum.class)).isTrue();
+		assertThat(canConvert(Boolean.class)).isTrue();
+		assertThat(canConvert(Character.class)).isTrue();
+		assertThat(canConvert(Byte.class)).isTrue();
+		assertThat(canConvert(Short.class)).isTrue();
+		assertThat(canConvert(Integer.class)).isTrue();
+		assertThat(canConvert(Long.class)).isTrue();
+		assertThat(canConvert(Float.class)).isTrue();
+		assertThat(canConvert(Double.class)).isTrue();
 
-		assertThat(converter.canConvert(Boolean.class)).isTrue();
-		assertThat(converter.canConvert(Character.class)).isTrue();
-		assertThat(converter.canConvert(Byte.class)).isTrue();
-		assertThat(converter.canConvert(Short.class)).isTrue();
-		assertThat(converter.canConvert(Integer.class)).isTrue();
-		assertThat(converter.canConvert(Long.class)).isTrue();
-		assertThat(converter.canConvert(Float.class)).isTrue();
-		assertThat(converter.canConvert(Double.class)).isTrue();
+		assertThat(canConvert(Boolean.TYPE)).isTrue();
+		assertThat(canConvert(Character.TYPE)).isTrue();
+		assertThat(canConvert(Byte.TYPE)).isTrue();
+		assertThat(canConvert(Short.TYPE)).isTrue();
+		assertThat(canConvert(Integer.TYPE)).isTrue();
+		assertThat(canConvert(Long.TYPE)).isTrue();
+		assertThat(canConvert(Float.TYPE)).isTrue();
+		assertThat(canConvert(Double.TYPE)).isTrue();
+	}
 
-		assertThat(converter.canConvert(Boolean.TYPE)).isTrue();
-		assertThat(converter.canConvert(Character.TYPE)).isTrue();
-		assertThat(converter.canConvert(Byte.TYPE)).isTrue();
-		assertThat(converter.canConvert(Short.TYPE)).isTrue();
-		assertThat(converter.canConvert(Integer.TYPE)).isTrue();
-		assertThat(converter.canConvert(Long.TYPE)).isTrue();
-		assertThat(converter.canConvert(Float.TYPE)).isTrue();
-		assertThat(converter.canConvert(Double.TYPE)).isTrue();
+	@Test
+	void testGetConverter_String() {
+		HeaderConverter<String, String> converter = getConverter(String.class);
+		assertThat(converter).isNotNull();
+
+		String value = "Hello";
+		assertThat(converter.convertToHeaderValue(value)).isSameAs(value);
+		assertThat(converter.convertToObjectValue(value)).isSameAs(value);
+	}
+
+	@Test
+	void testGetConverter_Enum() {
+		HeaderConverter<SampleEnum, String> converter = getConverter(SampleEnum.class);
+		assertThat(converter).isNotNull();
+
+		assertThat(converter.convertToHeaderValue(SampleEnum.ONE)).isEqualTo("ONE");
+		assertThat(converter.convertToHeaderValue(SampleEnum.TWO)).isEqualTo("TWO");
+		assertThat(converter.convertToObjectValue("ONE")).isSameAs(SampleEnum.ONE);
+		assertThat(converter.convertToObjectValue("TWO")).isSameAs(SampleEnum.TWO);
+	}
+
+	@Test
+	void testGetConverter_Boolean() {
+		HeaderConverter<Boolean, String> converter = getConverter(Boolean.class);
+		assertThat(converter).isNotNull();
+
+		assertThat(converter.convertToHeaderValue(Boolean.TRUE)).isEqualTo("true");
+		assertThat(converter.convertToHeaderValue(Boolean.FALSE)).isEqualTo("false");
+		assertThat(converter.convertToObjectValue("true")).isEqualTo(Boolean.TRUE);
+		assertThat(converter.convertToObjectValue("false")).isEqualTo(Boolean.FALSE);
+
+		HeaderConverter<Boolean, String> primitiveConverter = getConverter(Boolean.TYPE);
+		assertThat(primitiveConverter).isSameAs(converter);
+	}
+
+	@Test
+	void testGetConverter_Character() {
+		HeaderConverter<Character, String> converter = getConverter(Character.class);
+		assertThat(converter).isNotNull();
+
+		assertThat(converter.convertToHeaderValue('e')).isEqualTo("e");
+		assertThat(converter.convertToObjectValue("e")).isEqualTo('e');
+
+		HeaderConverter<Character, String> primitiveConverter = getConverter(Character.TYPE);
+		assertThat(primitiveConverter).isSameAs(converter);
 	}
 
 }
