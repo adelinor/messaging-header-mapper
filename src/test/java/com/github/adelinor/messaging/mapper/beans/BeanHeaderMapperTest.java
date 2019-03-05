@@ -2,6 +2,7 @@ package com.github.adelinor.messaging.mapper.beans;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -78,7 +79,7 @@ class BeanHeaderMapperTest {
 		assertThat(m.getFlags()).isEqualTo(3);
 		assertThat(m.getRevisionNumber()).isEqualTo(54);
 		assertThat(m.getSequence()).isEqualTo(7);		
-		assertThat(m.getIdentifier()).isEqualTo(10021);		
+		assertThat(m.getIdentifier()).isEqualTo(10021L);		
 		assertThat(m.getRate()).isEqualTo(0.02f);		
 		assertThat(m.getIncrease()).isEqualTo(10.202d);		
 	}
@@ -138,6 +139,38 @@ class BeanHeaderMapperTest {
 			})
 			.withMessageContaining("messageNumber is null")
 			.withNoCause();
+	}
+
+	@Test
+	void testToHeaders_Primitive() {
+		MyMessagePrimitives m = new MyMessagePrimitives();
+		m.setDuplicate(true);
+		m.setPriority('A');
+		m.setFlags((byte) 3); 
+		m.setSequence(7);
+		m.setIdentifier(10021L);
+		m.setRate(0.02f);
+		m.setIncrease(10.202d);
+		
+		Map<String, Object> headers = new HashMap<>();
+		BeanHeaderMapper<MyMessagePrimitives> mapper = new BeanHeaderMapper<>(MyMessagePrimitives.class);
+		mapper.toHeaders(m, headers);
+
+		for (String header : Arrays.asList("IS_DUPLICATE", "PRIORITY","FLAGS",
+				"REVISION","SEQ","ID","RATE","INC")) {
+			assertThat(headers.containsKey(header))
+				.as("Found %s header", header)
+				.isTrue();
+		}
+
+		assertThat(headers.get("IS_DUPLICATE")).isEqualTo("true");
+		assertThat(headers.get("PRIORITY")).isEqualTo("A");
+		assertThat(headers.get("FLAGS")).isEqualTo("3");
+		assertThat(headers.get("REVISION")).isEqualTo("54");
+		assertThat(headers.get("SEQ")).isEqualTo("7");
+		assertThat(headers.get("ID")).isEqualTo("10021");
+		assertThat(headers.get("RATE")).isEqualTo("0.02");
+		assertThat(headers.get("INC")).isEqualTo("10.202");
 	}
 
 }
