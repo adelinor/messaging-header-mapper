@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 
 /**
  * Default implementation to be used for
@@ -47,20 +46,83 @@ public class DefaultHeaderConverter implements HeaderConverter<Object, String> {
 			return value;
 		}		
 	}
-	
+
+	private static class EnumHeaderConverter implements HeaderConverter<Enum<?>, String> {
+		
+		@SuppressWarnings("rawtypes")
+		private Class enumType;
+		
+		@SuppressWarnings("rawtypes")
+		private EnumHeaderConverter(Class enumType) {
+			this.enumType = enumType;
+		}
+
+		@Override
+		public String convertToHeaderValue(Enum<?> value) {
+			return value.name();
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Enum<?> convertToObjectValue(String value) {
+			return Enum.valueOf(enumType, (String) value);
+		}
+	}
+
+	private static class BooleanHeaderConverter implements HeaderConverter<Boolean, String> {
+
+		@Override
+		public String convertToHeaderValue(Boolean value) {
+			return value.toString();
+		}
+
+		@Override
+		public Boolean convertToObjectValue(String value) {
+			return Boolean.valueOf(value);
+		}
+	}
+
+	private static class CharacterHeaderConverter implements HeaderConverter<Character, String> {
+
+		@Override
+		public String convertToHeaderValue(Character value) {
+			return value.toString();
+		}
+
+		@Override
+		public Character convertToObjectValue(String value) {
+			if (value.isEmpty()) {
+				throw new IllegalArgumentException("An empty string cannot be converted to "
+						+ "a Character instance");
+			} else if (value.length() > 1) {
+				throw new IllegalArgumentException("'" + value + "' cannot be converted to "
+						+ "a Character instance");
+			} else {
+				return value.charAt(0);
+			}
+		}
+	}
+
 	/**
 	 * Registry of converters for the getConverter method.
 	 */
 	private List<Map.Entry<Class<?>, HeaderConverter<?, ?>>> registry;
 	
 	/** Cannot be instantiated by outside callers */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private DefaultHeaderConverter() {
 		this.registry = new ArrayList<>();
-		this.registry.add(new AbstractMap.SimpleImmutableEntry(
-				String.class, new StringHeaderConverter()));
+		this.addConverter(new StringHeaderConverter(), String.class);
+		this.addConverter(new BooleanHeaderConverter(), Boolean.class, Boolean.TYPE);
+		this.addConverter(new CharacterHeaderConverter(), Character.class, Character.TYPE);
 	}
-		
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private synchronized void addConverter(HeaderConverter<?, String> converter, Class... forClasses) {
+		for (Class forClass : forClasses) {
+			this.registry.add(new AbstractMap.SimpleImmutableEntry(forClass, converter));			
+		}
+	}
+
 	public static boolean canConvert(Class<?> objectValueType) {
 		return objectValueType == String.class ||
 				objectValueType.isEnum() ||
@@ -69,6 +131,10 @@ public class DefaultHeaderConverter implements HeaderConverter<Object, String> {
 					.anyMatch( c -> objectValueType == c);
 	}
 
+	/**
+	 * @param objectValueType Class of value in object
+	 * @return Converter or null is the type is not supported
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> HeaderConverter<T, String> getConverter(Class<T> objectValueType) {
 		for (Entry<Class<?>, HeaderConverter<?, ?>> entry : INSTANCE.registry) {
@@ -76,14 +142,28 @@ public class DefaultHeaderConverter implements HeaderConverter<Object, String> {
 				return (HeaderConverter<T, String>) entry.getValue();
 			}
 		}
+		
+		// For enum types, converters are added on demand
+		if (objectValueType.isEnum()) {
+			EnumHeaderConverter result = new EnumHeaderConverter(objectValueType);
+			INSTANCE.addConverter(result, objectValueType);
+			return (HeaderConverter<T, String>) result;
+		}
 		return null;
 	}
 
+	/**
+	 * This method is not supported to be consistent with {@link #convertToObjectValue(String)}.
+	 */
 	@Override
 	public String convertToHeaderValue(Object value) {
 		throw new UnsupportedOperationException("Get converter with getConverter method");
 	}
 
+	/**
+	 * Unfortunately an implementation supporting multiple types
+	 * cannot be done without knowing the intended target type.
+	 */
 	@Override
 	public Object convertToObjectValue(String value) {
 		throw new UnsupportedOperationException("Get converter with getConverter method");
