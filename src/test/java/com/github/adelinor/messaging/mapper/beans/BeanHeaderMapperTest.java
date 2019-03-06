@@ -3,9 +3,11 @@ package com.github.adelinor.messaging.mapper.beans;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,7 +45,13 @@ class BeanHeaderMapperTest {
 		MyMessage m = new MyMessage();
 		mapper.fromHeaders(headers, m);
 		
-		assertThat(m.getReceiveDate()).isEqualTo("1970-01-01T01:00:00.000");
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+
+		// Set 1970-01-01T00:00:00.000
+		cal.set(1970, 0, 1, 0, 0, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		assertThat(m.getReceiveDate()).isEqualTo(cal.getTime());
 	}
 
 	@Test
