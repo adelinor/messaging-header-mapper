@@ -21,7 +21,7 @@ public class KeyAttributes {
 	
 	private byte[] payload;
 	
-	@Header(required=true, use=Use.READONLY)
+	@Header(required=true, use=Use.WRITEONLY)
 	private String sender;
 
 	@Header(use=Use.WRITEONLY)
