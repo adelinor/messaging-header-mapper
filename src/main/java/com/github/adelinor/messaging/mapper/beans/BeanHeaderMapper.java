@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.adelinor.messaging.mapper.Header;
+import com.github.adelinor.messaging.mapper.Header.Use;
 import com.github.adelinor.messaging.mapper.HeaderConverter;
 import com.github.adelinor.messaging.mapper.MapHeaderMapper;
 
@@ -33,28 +34,34 @@ public class BeanHeaderMapper<T> implements MapHeaderMapper<T> {
 	@Override
 	public void fromHeaders(Map<String, Object> headers, T target) {
 		for (MappingData mapping : mappings) {
-			boolean hasHeader = headers.containsKey(mapping.getHeaderName());
-			if ((! hasHeader) && mapping.isRequired()) {
-				throw new IllegalArgumentException(mapping.getHeaderName() + 
-						" is required and was not provided in " + headers);
+			if (mapping.getUse() == Use.READONLY || mapping.getUse() == Use.READWRITE) {
+				setFromHeaders(headers, target, mapping);				
 			}
-			if (hasHeader) {
-				Object value = headers.get(mapping.getHeaderName());
-				
-				if (value != null) {
-					@SuppressWarnings("unchecked")
-					HeaderConverter<Object, Object> converter = (HeaderConverter<Object, Object>) mapping.getConverter();
-					Object objectValue = converter.convertToObjectValue(value);
+		}
+	}
 
-					try {
-						mapping.getSetter().invoke(target, objectValue);
-					} catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException exc) {
-						throw new IllegalStateException("Cannot set property " +
-								mapping.getFieldName() + " on object of type " +
-								target.getClass(), exc);
-					}
+	private void setFromHeaders(Map<String, Object> headers, T target, MappingData mapping) {
+		boolean hasHeader = headers.containsKey(mapping.getHeaderName());
+		if ((! hasHeader) && mapping.isRequired()) {
+			throw new IllegalArgumentException(mapping.getHeaderName() + 
+					" is required and was not provided in " + headers);
+		}
+		if (hasHeader) {
+			Object value = headers.get(mapping.getHeaderName());
+			
+			if (value != null) {
+				@SuppressWarnings("unchecked")
+				HeaderConverter<Object, Object> converter = (HeaderConverter<Object, Object>) mapping.getConverter();
+				Object objectValue = converter.convertToObjectValue(value);
 
+				try {
+					mapping.getSetter().invoke(target, objectValue);
+				} catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException exc) {
+					throw new IllegalStateException("Cannot set property " +
+							mapping.getFieldName() + " on object of type " +
+							target.getClass(), exc);
 				}
+
 			}
 		}
 	}
@@ -62,26 +69,32 @@ public class BeanHeaderMapper<T> implements MapHeaderMapper<T> {
 	@Override
 	public void toHeaders(T source, Map<String, Object> headers) {
 		for (MappingData mapping : mappings) {
-			Object value;
-			try {
-				value = mapping.getGetter().invoke(source);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exc) {
-				throw new IllegalStateException("Cannot get property " +
-						mapping.getFieldName() + " on object of type " +
-						source.getClass(), exc);
+			if (mapping.getUse() == Use.WRITEONLY || mapping.getUse() == Use.READWRITE) {
+				setToHeaders(headers, source, mapping);
 			}
-			
-			if (value == null && mapping.isRequired()) {
-				throw new IllegalArgumentException(mapping.getHeaderName() + 
-						" is required and field " + mapping.getFieldName() +
-						" is null");
-			}
-			if (value != null) {
-				@SuppressWarnings("unchecked")
-				HeaderConverter<Object, Object> converter = (HeaderConverter<Object, Object>) mapping.getConverter();
-				Object headerValue = converter.convertToHeaderValue(value);
-				headers.put(mapping.getHeaderName(), headerValue);
-			}
+		}
+	}
+
+	private void setToHeaders(Map<String, Object> headers, T source, MappingData mapping) {
+		Object value;
+		try {
+			value = mapping.getGetter().invoke(source);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exc) {
+			throw new IllegalStateException("Cannot get property " +
+					mapping.getFieldName() + " on object of type " +
+					source.getClass(), exc);
+		}
+		
+		if (value == null && mapping.isRequired()) {
+			throw new IllegalArgumentException(mapping.getHeaderName() + 
+					" is required and field " + mapping.getFieldName() +
+					" is null");
+		}
+		if (value != null) {
+			@SuppressWarnings("unchecked")
+			HeaderConverter<Object, Object> converter = (HeaderConverter<Object, Object>) mapping.getConverter();
+			Object headerValue = converter.convertToHeaderValue(value);
+			headers.put(mapping.getHeaderName(), headerValue);
 		}
 	}
 }
