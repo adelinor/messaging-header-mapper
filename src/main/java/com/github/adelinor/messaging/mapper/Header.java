@@ -1,9 +1,9 @@
 package com.github.adelinor.messaging.mapper;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
@@ -29,9 +29,34 @@ import java.lang.annotation.Target;
  * </pre></blockquote>
  *
  */
-@Target(FIELD)
-@Retention(RUNTIME)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
 public @interface Header {
+	
+	/**
+	 * How this header is supposed to be used.
+	 */
+	public enum Use {
+		/**
+		 * Header is copied only from header to java bean
+		 * but is disregarded when copying java bean properties
+		 * to headers
+		 */
+		READONLY,
+
+		/**
+		 * Header is copied from header to java bean and
+		 * copied from java bean to headers
+		 */
+		READWRITE,
+
+		/**
+		 * Disregarded when copying headers to java bean but
+		 * copied when copying java bean properties to headers
+		 */
+		WRITEONLY
+	};
 
     /**
      * (Optional) The name of the column. Defaults to
@@ -50,4 +75,11 @@ public @interface Header {
      * supports very simple conversions.
      */
     Class<? extends HeaderConverter<?, ?>> converter() default DefaultHeaderConverter.class;
+    
+    
+    /**
+     * (Optional) The header is by default used in a bi-directional
+     * way: i.e. READWRITE .
+     */
+    Use use() default Use.READWRITE;
 }
