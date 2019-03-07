@@ -89,9 +89,9 @@ private String encoding;
 ```
 
 In this scenario, the mapping for the property `encoding` is only considered in the `fromHeaders` method. Because `required` is set to *true*, the invocation of fromHeaders will fail unless headers define this value (this is illustrated by
-the test testFromHeaders_MissingRequired in [BeanHeaderMapperReadWriteTest.java](src/test/java/com/github/adelinor/messaging/mapper/beans/BeanHeaderMapperReadWriteTest.java) ).
+the test testFromHeaders_MissingRequired in [BeanHeaderMapperReadWriteTest.java](src/test/java/com/github/adelinor/messaging/mapper/beans/BeanHeaderMapperReadWriteTest.java)).
 
-** Header as output only **
+**Header as output only**
 
 ```java
 @Header(use=Use.WRITEONLY)
@@ -103,12 +103,12 @@ In the above mapping, the property `messageNumber` is only considered in the
 To indicate that the output must be provided as an output, the `required` 
 attribute can be set to *true*.
 
-** Header as input and output **
+**Header as input and output**
 
 When the `use` attribute is not specified in the `@Header` annotation, the
 default behavior is treat the mapping as both an input and output. This corresponds to the value `Use.READWRITE`.
 
-** Getter and setters on mapped properties with @Header **
+**Getter and setters on mapped properties with @Header**
 
 For properties mapped with `@Header(use=Use.READONLY)`, i.e. input, the Java bean needs to define a setter method. The getter method for the mapped property 
 is not mandatory.
