@@ -2,6 +2,7 @@ package com.github.adelinor.messaging.mapper.beans;
 
 import java.lang.reflect.Method;
 
+import com.github.adelinor.messaging.mapper.Header.Use;
 import com.github.adelinor.messaging.mapper.HeaderConverter;
 
 /**
@@ -19,6 +20,7 @@ class MappingData {
 	private boolean required;
 	private Method getter;
 	private Method setter;
+	private Use use;
 
 	
 	/**
@@ -66,5 +68,9 @@ class MappingData {
 
 	public HeaderConverter<?, ?> getConverter() {
 		return converter;
+	}
+
+	public Use getUse() {
+		return use;
 	}
 }
