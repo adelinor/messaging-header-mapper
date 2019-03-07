@@ -1,11 +1,14 @@
 package com.github.adelinor.messaging.mapper.beans;
 
+import static java.util.Locale.ENGLISH;
+
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
 import com.github.adelinor.messaging.mapper.DefaultHeaderConverter;
 import com.github.adelinor.messaging.mapper.Header;
+import com.github.adelinor.messaging.mapper.Header.Use;
 import com.github.adelinor.messaging.mapper.HeaderConverter;
 
 /**
@@ -32,12 +35,15 @@ class IntrospectionMappingExtractor {
 			return null;
 		}
 
-		HeaderConverter<?, ?> converter = getHeaderConverter(header.converter(), beanClass, field);
-		PropertyDescriptor desc = getPropertyDescriptor(field.getName(), beanClass);
 		String headerName = header.name();
 		if (headerName.isEmpty()) {
 			headerName = field.getName();
 		}
+
+		HeaderConverter<?, ?> converter = getHeaderConverter(header.converter(), beanClass, field);
+
+		PropertyDescriptor desc = getPropertyDescriptor(field, beanClass, header.use());
+
 		return new MappingData(
 						field.getType(),
 						field.getName(),
@@ -45,7 +51,8 @@ class IntrospectionMappingExtractor {
 						converter,
 						header.required(),
 						desc.getReadMethod(),
-						desc.getWriteMethod()
+						desc.getWriteMethod(),
+						header.use()
 						);
 	}
 
@@ -75,13 +82,31 @@ class IntrospectionMappingExtractor {
 		}
 	}
 
-	private PropertyDescriptor getPropertyDescriptor(String fieldName, Class<?> beanClass) {
+	private PropertyDescriptor getPropertyDescriptor(Field field,
+			Class<?> beanClass, Use use) {
+		String fieldName = field.getName();
+		String setterName = null;
+		if (use == Use.READONLY || use == Use.READWRITE) {
+			setterName = "set" + capitalize(fieldName);
+		}
+		String getterName = null;
+		if (use == Use.WRITEONLY || use == Use.READWRITE) {
+			String prefix = (field.getType() == boolean.class) ? "is" : "get";
+			getterName = prefix + capitalize(fieldName);
+		}
 		try {
-			return new PropertyDescriptor(fieldName, beanClass);
+			return new PropertyDescriptor(fieldName, beanClass, getterName, setterName);
 
 		} catch (IntrospectionException exc) {
 			throw new BeanHeaderMappingException(fieldName, beanClass, exc.getMessage());
 		}
+	}
+	
+	/**
+	 * Copied from java.beans.NameGenarator.capitalize(String)
+	 */
+	private static String capitalize(String name) {
+		return name.substring(0, 1).toUpperCase(ENGLISH) + name.substring(1);
 	}
 
 }

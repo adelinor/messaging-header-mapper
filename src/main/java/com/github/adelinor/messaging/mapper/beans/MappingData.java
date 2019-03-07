@@ -27,12 +27,15 @@ class MappingData {
 	 * @param fieldType Type of mapped header in target java bean
 	 * @param fieldName Field name in target java bean
 	 * @param headerName Header name
+	 * @param converter Convert class to use
 	 * @param required Is the header required?
 	 * @param getter Java bean access method
 	 * @param setter Java bean access method
+	 * @param use Use of header
 	 */
-	public MappingData(Class<?> fieldType, String fieldName, String headerName,
-			HeaderConverter<?, ?> converter, boolean required, Method getter, Method setter) {
+	MappingData(Class<?> fieldType, String fieldName, String headerName,
+			HeaderConverter<?, ?> converter, boolean required,
+			Method getter, Method setter, Use use) {
 		this.fieldType = fieldType;
 		this.fieldName = fieldName;
 		this.headerName = headerName;
@@ -40,37 +43,38 @@ class MappingData {
 		this.required = required;
 		this.getter = getter;
 		this.setter = setter;
+		this.use = use;
 	}
 
-	public Class<?> getFieldType() {
+	Class<?> getFieldType() {
 		return fieldType;
 	}
 
-	public String getFieldName() {
+	String getFieldName() {
 		return fieldName;
 	}
 
-	public String getHeaderName() {
+	String getHeaderName() {
 		return headerName;
 	}
 
-	public boolean isRequired() {
+	boolean isRequired() {
 		return required;
 	}
 
-	public Method getGetter() {
+	Method getGetter() {
 		return getter;
 	}
 
-	public Method getSetter() {
+	Method getSetter() {
 		return setter;
 	}
 
-	public HeaderConverter<?, ?> getConverter() {
+	HeaderConverter<?, ?> getConverter() {
 		return converter;
 	}
 
-	public Use getUse() {
+	Use getUse() {
 		return use;
 	}
 }
