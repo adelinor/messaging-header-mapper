@@ -12,12 +12,12 @@ import java.util.TimeZone;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.github.adelinor.messaging.mapper.beans.BeanHeaderMapper;
+import com.github.adelinor.messaging.mapper.MapHeaderMapper;
 import com.github.adelinor.sample.MessageType;
 import com.github.adelinor.sample.MyMessage;
 import com.github.adelinor.sample.primitives.MyMessagePrimitives;
 
-class BeanHeaderMapperTest {
+class BeanMapHeaderMapperTest {
 
 	@Test
 	void testFromHeaders() {
@@ -25,7 +25,7 @@ class BeanHeaderMapperTest {
 		headers.put("MESSAGE_TYPE", "INBOUND");
 		headers.put("BATCH_NUMBER", "12345");
 		
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		MyMessage m = new MyMessage();
 		mapper.fromHeaders(headers, m);
 		
@@ -41,7 +41,7 @@ class BeanHeaderMapperTest {
 		headers.put("receiveDate", 0L);
 		headers.put("BATCH_NUMBER", "12345");
 		
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		MyMessage m = new MyMessage();
 		mapper.fromHeaders(headers, m);
 		
@@ -60,7 +60,7 @@ class BeanHeaderMapperTest {
 		headers.put("IS_VALID", "true");
 		headers.put("BATCH_NUMBER", "12345");
 		
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		MyMessage m = new MyMessage();
 		mapper.fromHeaders(headers, m);
 		
@@ -73,7 +73,7 @@ class BeanHeaderMapperTest {
 		headers.put("IS_DUPLICATE", "true");
 		headers.put("BATCH_NUMBER", "12345");
 		
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		MyMessage m = new MyMessage();
 		mapper.fromHeaders(headers, m);
 		
@@ -86,7 +86,7 @@ class BeanHeaderMapperTest {
 		headers.put("IS_DUPLICATE", null);
 		headers.put("BATCH_NUMBER", "12345");
 		
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		MyMessage m = new MyMessage();
 		m.setDuplicate(true);
 		mapper.fromHeaders(headers, m);
@@ -106,7 +106,7 @@ class BeanHeaderMapperTest {
 		headers.put("RATE", "0.02");
 		headers.put("INC", "10.202");
 		
-		BeanHeaderMapper<MyMessagePrimitives> mapper = new BeanHeaderMapper<>(MyMessagePrimitives.class);
+		MapHeaderMapper<MyMessagePrimitives> mapper = new BeanMapHeaderMapper<>(MyMessagePrimitives.class);
 		MyMessagePrimitives m = new MyMessagePrimitives();
 		mapper.fromHeaders(headers, m);
 		
@@ -124,7 +124,7 @@ class BeanHeaderMapperTest {
 	void testFromHeaders_MissingRequired() {
 		Map<String, Object> headers = new HashMap<>();
 		
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		MyMessage m = new MyMessage();
 		Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
 			.isThrownBy(() -> {
@@ -141,7 +141,7 @@ class BeanHeaderMapperTest {
 		m.setMessageType(MessageType.INBOUND);
 		
 		Map<String, Object> headers = new HashMap<>();
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		mapper.toHeaders(m, headers);
 		assertThat(headers.get("BATCH_NUMBER")).isEqualTo("12345");
 		assertThat(headers.get("MESSAGE_TYPE")).isEqualTo("INBOUND");
@@ -157,7 +157,7 @@ class BeanHeaderMapperTest {
 		m.setValid(Boolean.FALSE);
 		
 		Map<String, Object> headers = new HashMap<>();
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		mapper.toHeaders(m, headers);
 		assertThat(headers.get("IS_VALID")).isEqualTo("false");
 		assertThat(headers.get("IS_DUPLICATE")).isEqualTo("true");
@@ -170,7 +170,7 @@ class BeanHeaderMapperTest {
 		m.setValid(null);
 		
 		Map<String, Object> headers = new HashMap<>();
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		mapper.toHeaders(m, headers);
 		assertThat(headers.containsKey("IS_VALID")).isFalse();
 	}
@@ -180,7 +180,7 @@ class BeanHeaderMapperTest {
 		MyMessage m = new MyMessage();
 		Map<String, Object> headers = new HashMap<>();
 		
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
 			.isThrownBy(() -> {
 				mapper.toHeaders(m, headers);
@@ -202,7 +202,7 @@ class BeanHeaderMapperTest {
 		m.setIncrease(10.202d);
 		
 		Map<String, Object> headers = new HashMap<>();
-		BeanHeaderMapper<MyMessagePrimitives> mapper = new BeanHeaderMapper<>(MyMessagePrimitives.class);
+		MapHeaderMapper<MyMessagePrimitives> mapper = new BeanMapHeaderMapper<>(MyMessagePrimitives.class);
 		mapper.toHeaders(m, headers);
 
 		for (String header : Arrays.asList("IS_DUPLICATE", "PRIORITY","FLAGS",
@@ -234,7 +234,7 @@ class BeanHeaderMapperTest {
 
 		Map<String, Object> headers = new HashMap<>();
 		
-		BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+		MapHeaderMapper<MyMessage> mapper = new BeanMapHeaderMapper<>(MyMessage.class);
 		mapper.toHeaders(m, headers);
 		
 		assertThat(headers.get("receiveDate")).isEqualTo(expectedMillis);

@@ -8,11 +8,12 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.adelinor.messaging.mapper.MapHeaderMapper;
 import com.github.adelinor.sample.readwrite.KeyAttributes;
 
-class BeanHeaderMapperReadWriteTest {
+class BeanMapHeaderMapperReadWriteTest {
 	
-	private BeanHeaderMapper<KeyAttributes> mapper = new BeanHeaderMapper<>(KeyAttributes.class);
+	private MapHeaderMapper<KeyAttributes> mapper = new BeanMapHeaderMapper<>(KeyAttributes.class);
 
 	@Test
 	void testFromHeaders_MissingRequired() {
