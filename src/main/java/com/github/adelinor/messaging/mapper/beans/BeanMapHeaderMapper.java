@@ -3,8 +3,8 @@ package com.github.adelinor.messaging.mapper.beans;
 import java.util.Map;
 
 import com.github.adelinor.messaging.mapper.Header;
+import com.github.adelinor.messaging.mapper.HeaderMapper;
 import com.github.adelinor.messaging.mapper.MapHeaderAccessor;
-import com.github.adelinor.messaging.mapper.MapHeaderMapper;
 
 /**
  * Uses the {@link Header} annotation to generating
@@ -13,25 +13,16 @@ import com.github.adelinor.messaging.mapper.MapHeaderMapper;
  * @author  Adelino Rodrigues (created by)
  * @since 26 Feb 2019 (creation date)
  */
-public class BeanMapHeaderMapper<T> implements MapHeaderMapper<T> {
+public class BeanMapHeaderMapper {
 
 	/** Shared instance */
 	private static final MapHeaderAccessor MAP_HEADER_ACCESSOR = new MapHeaderAccessor();
 	
-	/** Bean implementation to use */
-	private BeanHeaderMapper<Map<String, Object>, T> beanMapper;
-	
-	public BeanMapHeaderMapper(Class<T> beanClass) {
-		this.beanMapper = new BeanHeaderMapper<>(beanClass, MAP_HEADER_ACCESSOR);
-	}
+	/** Hide constructor */
+	private BeanMapHeaderMapper() {}
 
-	@Override
-	public void fromHeaders(Map<String, Object> headers, T target) {
-		this.beanMapper.fromHeaders(headers, target);
-	}
-
-	@Override
-	public void toHeaders(T source, Map<String, Object> headers) {
-		this.beanMapper.toHeaders(source, headers);
+	/** Create mapper instance for class */
+	public static <T> HeaderMapper<Map<String, Object>, T> forClass(Class<T> beanClass) {
+		return new BeanHeaderMapper<>(beanClass, MAP_HEADER_ACCESSOR);
 	}
 }
