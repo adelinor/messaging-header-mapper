@@ -1,10 +1,10 @@
-package com.github.adelinor.messaging.mapper.beans;
+package com.github.adelinor.messaging.mapper.map;
 
 import java.util.Map;
 
 import com.github.adelinor.messaging.mapper.Header;
 import com.github.adelinor.messaging.mapper.HeaderMapper;
-import com.github.adelinor.messaging.mapper.MapHeaderAccessor;
+import com.github.adelinor.messaging.mapper.beans.BeanHeaderMapper;
 
 /**
  * Uses the {@link Header} annotation to generating

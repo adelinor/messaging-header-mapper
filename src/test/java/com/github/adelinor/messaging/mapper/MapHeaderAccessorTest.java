@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.adelinor.messaging.mapper.map.MapHeaderAccessor;
+
 class MapHeaderAccessorTest {
 	
 	private MapHeaderAccessor accessor = new MapHeaderAccessor();

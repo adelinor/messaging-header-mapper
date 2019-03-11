@@ -1,6 +1,8 @@
-package com.github.adelinor.messaging.mapper;
+package com.github.adelinor.messaging.mapper.map;
 
 import java.util.Map;
+
+import com.github.adelinor.messaging.mapper.HeaderAccessor;
 
 /**
  * {@link HeaderAccessor} for a Map.

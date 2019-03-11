@@ -1,4 +1,4 @@
-package com.github.adelinor.messaging.mapper.beans;
+package com.github.adelinor.messaging.mapper.map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -9,6 +9,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.github.adelinor.messaging.mapper.HeaderMapper;
+import com.github.adelinor.messaging.mapper.map.BeanMapHeaderMapper;
 import com.github.adelinor.sample.readwrite.KeyAttributes;
 
 class BeanMapHeaderMapperReadWriteTest {

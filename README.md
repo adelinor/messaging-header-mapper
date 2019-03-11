@@ -27,11 +27,20 @@ public class MyMessage {
 }
 ```
 
-These annotations are then used by the Java bean reflection mapper:
+These annotations are then used by the Java bean reflection mapper.
+You can create an instance using the appropriate class according to
+the message format you use. In the snippet below, headers are in the
+form of a Map:
 
 ```java
-BeanHeaderMapper<MyMessage> mapper = new BeanHeaderMapper<>(MyMessage.class);
+HeaderMapper<Map<String, Object>, MyMessage> mapper = BeanMapHeaderMapper.forClass(MyMessage.class);
 ```
+
+See
+[BeanJmsMessageHeaderMapper](src/main/java/com/github/adelinor/messaging/mapper/jms/BeanJmsMessageHeaderMapper.java)
+and
+[BeanCamelMessageHeaderMapper](src/main/java/com/github/adelinor/messaging/mapper/camel/BeanCamelMessageHeaderMapper.java)
+classes for respectively a JMS message and a Camel message. 
 
 From headers in the form of a map...
 

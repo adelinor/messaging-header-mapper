@@ -1,4 +1,4 @@
-package com.github.adelinor.messaging.mapper.beans;
+package com.github.adelinor.messaging.mapper.map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.github.adelinor.messaging.mapper.HeaderMapper;
+import com.github.adelinor.messaging.mapper.map.BeanMapHeaderMapper;
 import com.github.adelinor.sample.MessageType;
 import com.github.adelinor.sample.MyMessage;
 import com.github.adelinor.sample.primitives.MyMessagePrimitives;
