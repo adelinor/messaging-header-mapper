@@ -4,6 +4,16 @@ env:
   - secure: H/8S2Bye6NBOJEzl92ByDWwjbcv7bWhKNFZsAqSd2rExaiY8VZaUZiSDHwqY1VmvDql17409c/TI0fECrqiX0knV1mnEW5yo/WAGwhXJ1Aey0cWLZTxOYTobbCA+d8U3phxDRCpfrWFw1Vgu9WCXbGhtdhpMp2jdynUwvJPv8eqPtvW5xaepNLwVspIQYonNaDWmHpM8Z8PyWxrjOAT5hDgVkKtd7V16ABoRmAs4Akz/p5Y7+SMs/xDwedvft4djNtc7HmOL9aP0vv3l0qgOKob9svF3u+HXEzmsIzQwbrlewEGKHdKrSUsjHdrjO2yYmdzPbQwuuVRWBvd+HdndMQ7raUAaicTikxBJDwKJYUI7MFkxVVOSfPEziLoU0XkxtOQTEUmBaigIyEn9idli09EmeJVBcE30UkaCCoHUeIi0rYPJ60Iujs/14GPvmSwuYnt8nagC4XpMVjOfkf265WLN+ZSvXvaN+dSmXHh0lzp652daS8q/JjPsmIzy0kdA0tQUuYMRwEO5ujlGs/fLU7aGFt6fCxRctEOmDxko4SmQEVdsWhDa+ituxFnDRgESR1vRUNMXkcB+ClalRBFPqZH3iyQHE5KrvgfcljGsQkgpZlwfYfxiUpYJ+BXa9dRE29T3a4l/YmepOf3RLjy3BpusJGTAU6xfKETue3CtCPQ=
   - secure: AuGrpMMXLh+g6XJoJ/ZTmXPupmgBZgLpfY7ttnztm2XaqY4HXWdjF73Htc7NmN6VdwmpqEVzi2ERZwbTstkUqTRXuFNN2IZg8dLalDtkePJLPy90e3ItVzHni5jRDoTl3Uta1aS6uCriIrSIC8VWUXlnXULkKF0xlb3OSxZluaPEp9jwlusBeHIGuZn1cl69zDlKOVRrRTwvSKFm3tEk999jDnFl1tnkPYvKagtfz94TSAIfWoJk3QXmP8MUeZLmTGNQ0r90J6JpaJKwG11hPRkxTG1CCCXCMYUkLreYXBnD5LCSVwlVmayfsUh99gu+3J1utEqUQe4C0lJrJ4yWY8SaLyguttwRaQkCp9K/6i5/1wIMrhdFrKN+V29skwbyrghF07rc8np16XpImKdvIxTNwDvRcwmjCfR7mtUTi9WEqGZFYNyaApkkoPOzOvzLCllWWoMot8msasrn1b/sTPidp5FmRlHM9l4NeRfxIGM2SYRZADUwYj6vU7rGLTSPbdYC1yeXo2OvvQUHRX0+G5yw57D/4REa7PJoMy7Bo38zeevjNbAfdT/1+4KRLXn8YVMH/W1DBXw6+ZF09X+uoWtQVdz0MgdA1VyE596/BBNiNUhB/MjeUv5xEr+deaRGzFsKKUPd1rCeogRsInCcnUN5oUO4DV71T98FR2ieZUU=
 
-after_success:
-  # deploy snapshots to Maven central, but only from master branch
-  - "[[ $TRAVIS_BRANCH == \"master\" && $UPLOAD_SONATYPE == \"1\" ]] && mvn --settings ossrh-settings.xml -DskipTests -B deploy"
+before_deploy:
+- mvn help:evaluate -N -Dexpression=project.version|grep -v '\['
+- export project_version=$(mvn help:evaluate -N -Dexpression=project.version|grep -v '\[')
+
+deploy:
+  provider: releases
+  api_key:
+    secure: RjdDgZX4wTtJ6n7Z7IVEDk7TnnPgi4+0qqeyaCZSbhp+bputpaeDsyVVz4Xm0gObcs897oysq4YQZ64gmOYXkjz4iKPdMTzESXKAJYvho4SNMY33H3sQ7LVej/WYq+zx2NGWWlAzICZhdYPhvsnhdc5uMHFUjTjlwdvP3WNfJwavC7VBPs70pEuKBMg5UZ2vVHG5vsbnO0fD++x357fD6jyqL4EoVu1f0jTKpQhVVoE+CvlhUejPR639Sg2+FYU9nP9WIDvLiTE9SRe3ObAsnBUnm7ExmBfC+Uqxj1KRfEpdPXSA9AKg2izM7Ar6IaQJWqSrd0dqy0ytNuT+3KWAbgOrBeSCKduM3ORo5ddYesOMPGVUBvUk7DJjDEtuHoDOd8SMqqpN6I23fBpwnVgWHHz7Ao9dpdpiQ5tTt95HiRFpMLk77DklSj0q65JQrMUZv987v7UOjpe62v63h+kqj5jlW3a+HmwuHIk1fi/CIDLx/GDqntt1KE8YTqFEXLe2HJwrGpThbRYPxyK95FEtTvrWwDpXirC5gqXV9q1XCLP/n7vrHsJtbTkuS9IZe32tgN6h/TeBewGaYnV2VRPsCzDBwbuf+oecGgGXyP1QhyZKfMyUrURWS9AhAbOiA4/tHs+5LO1kLqcajZt4F5VDxpsk1rTZSVx5jm2vRktJTnk=
+  file: target/messaging-header-mapper-$project_version.jar
+  skip_cleanup: true
+  on:
+    repo: adelinor/messaging-header-mapper
+  name: $project_version
